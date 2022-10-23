@@ -1,0 +1,12 @@
+[package]
+name = "test_publish_cool_workspace"
+version = "0.13.3"
+edition = "2021"
+authors = ["Danny Meyer <danny@xasopheno.com>"]
+repository = "https://github.com/xasopheno/test_publish_cool_package"
+description = "test package for checking that publish_cool_workspace works as expected"
+license = "MIT OR Apache-2.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
