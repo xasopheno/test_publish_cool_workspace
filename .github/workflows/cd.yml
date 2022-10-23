@@ -1,0 +1,61 @@
+name: Continuous Deployment
+
+on:
+  push:
+    tags:
+      # ['*']
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  publish:
+    name: Publishing for ${{ matrix.job.os }}
+    runs-on: ${{ matrix.job.os }}
+    strategy:
+      matrix:
+        job:
+          # - { os: macos-latest,   target: x86_64-apple-darwin,         use-cross: false }
+          - { os: ubuntu-latest,  target: x86_64-unknown-linux-musl,   use-cross: true }
+          # - { os: ubuntu-latest,  target: i686-unknown-linux-gnu,      use-cross: true }
+          # - { os: ubuntu-latest,  target: arm-unknown-linux-gnueabihf, use-cross: true }
+          # - { os: ubuntu-latest,  target: aarch64-unknown-linux-gnu,   use-cross: true }
+
+    steps:
+      - uses: extractions/setup-just@v1
+        with: 
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Installing Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          # ref: ${{ github.event.pull_request.head.ref }}
+          # ref: ${{ github.ref_name }}
+          ref: 'main'
+      - name: Extract version
+        id: extract-version
+        run: |
+          printf "::set-output name=%s::%s\n" tag-name "${GITHUB_REF#refs/tags/}"
+      - name: Install publish-cool-workspace
+        uses: baptiste0928/cargo-install@v1
+        with:
+          crate: publish-cool-workspace
+      - name: setup git
+        run: 
+          just setup_git
+      - name: cargo login
+        run: 
+          cargo login ${{ secrets.CARGO_API_KEY }}
+      - name: publish
+        run: 
+          publish-cool-workspace smart-release --bump  "${GITHUB_REF#refs/tags/}" --bump-dependencies "${GITHUB_REF#refs/tags/}" --no-changelog --execute
+
+      - name: update_version
+        run: |
+          just squash
+
+        
+
