@@ -1,5 +1,5 @@
 [package]
-name = "test_publish_cool_workspace"
+name = "test_publish_cool_workspace_inner"
 version = "0.13.3"
 edition = "2021"
 authors = ["Danny Meyer <danny@xasopheno.com>"]
@@ -9,10 +9,3 @@ license = "MIT OR Apache-2.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[workspace]
-members = [
-  "test_publish_cool_workspace_inner"
-]
-
-[dependencies]
-test_publish_cool_workspace_inner={version="0.13.3", path="./test_publish_cool_workspace_inner"}
