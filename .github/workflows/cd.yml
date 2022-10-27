@@ -20,11 +20,17 @@ jobs:
           # - { os: ubuntu-latest,  target: aarch64-unknown-linux-gnu,   use-cross: true }
 
     steps:
+      - name: 🔍 GH_TOKEN
+        if: env.GH_TOKEN == ''
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: echo "GH_TOKEN=${GITHUB_TOKEN}" >> $GITHUB_ENV
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           # ref: ${{ github.event.pull_request.head.ref }}
           # ref: ${{ github.ref_name }}
+          token: ${{ env.GH_TOKEN }}
           fetch-depth: 0
           ref: 'main'
       - uses: extractions/setup-just@v1
@@ -40,12 +46,10 @@ jobs:
         uses: baptiste0928/cargo-install@v1
         with:
           crate: publish-cool-workspace
-      # - name: login with gh
-        # run: |
-          # echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
-          # gh api -X GET /repos/${{ GITHUB.REPOSITORY }}/topics --jq='.names'
-          # git config --global user.email "xasophenobot@xasopheno.com"
-          # git config --global user.name "Xasopheno Bot"
+      - name: setup git user
+        run: |
+          git config --global user.email "xasophenobot@xasopheno.com"
+          git config --global user.name "Xasopheno Bot"
 
       - name: cargo login
         run: 
@@ -55,11 +59,11 @@ jobs:
           publish-cool-workspace smart-release --bump  "${GITHUB_REF#refs/tags/}" --bump-dependencies "${GITHUB_REF#refs/tags/}" --no-changelog --execute
       - name: tag branch
         run: |
-          git tag "${GITHUB_REF#refs/tags/}-release"
-          git push --tags
-          # git reset --soft HEAD~1
-          # git commit --amend --no-edit
-          # git push --force-with-lease
+          # git tag "${GITHUB_REF#refs/tags/}-release"
+          # git push --tags
+          git reset --soft HEAD~1
+          git commit --amend --no-edit
+          git push --force-with-lease
 
         
 
