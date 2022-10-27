@@ -20,10 +20,6 @@ jobs:
           # - { os: ubuntu-latest,  target: aarch64-unknown-linux-gnu,   use-cross: true }
 
     steps:
-      - name: login with gh
-      - run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
-          gh api -X GET /repos/${{ GITHUB.REPOSITORY }}/topics --jq='.names'
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
@@ -44,10 +40,12 @@ jobs:
         uses: baptiste0928/cargo-install@v1
         with:
           crate: publish-cool-workspace
-      - name: setup git
-        run: |
-          git config --global user.email "xasophenobot@xasopheno.com"
-          git config --global user.name "Xasopheno Bot"
+      # - name: login with gh
+        # run: |
+          # echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
+          # gh api -X GET /repos/${{ GITHUB.REPOSITORY }}/topics --jq='.names'
+          # git config --global user.email "xasophenobot@xasopheno.com"
+          # git config --global user.name "Xasopheno Bot"
 
       - name: cargo login
         run: 
@@ -55,11 +53,13 @@ jobs:
       - name: publish
         run: 
           publish-cool-workspace smart-release --bump  "${GITHUB_REF#refs/tags/}" --bump-dependencies "${GITHUB_REF#refs/tags/}" --no-changelog --execute
-      - name: update_version
+      - name: tag branch
         run: |
-          git reset --soft HEAD~1
-          git commit --amend --no-edit
-          git push --force-with-lease
+          git tag "${GITHUB_REF#refs/tags/}-release"
+          git push --tags
+          # git reset --soft HEAD~1
+          # git commit --amend --no-edit
+          # git push --force-with-lease
 
         
 
