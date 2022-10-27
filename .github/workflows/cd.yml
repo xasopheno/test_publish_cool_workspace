@@ -25,6 +25,7 @@ jobs:
         with:
           # ref: ${{ github.event.pull_request.head.ref }}
           # ref: ${{ github.ref_name }}
+          fetch-depth: 0
           ref: 'main'
       - uses: extractions/setup-just@v1
         with: 
