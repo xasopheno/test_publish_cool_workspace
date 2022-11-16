@@ -1,6 +1,6 @@
 [package]
 name = "test_publish_cool_workspace_inner"
-version = "0.13.4"
+version = "0.13.9"
 edition = "2021"
 authors = ["Danny Meyer <danny@xasopheno.com>"]
 repository = "https://github.com/xasopheno/test_publish_cool_workspace"

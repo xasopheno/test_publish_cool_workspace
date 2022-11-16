@@ -4,11 +4,11 @@ version = 3
 
 [[package]]
 name = "test_publish_cool_workspace"
-version = "0.13.4"
+version = "0.13.9"
 dependencies = [
  "test_publish_cool_workspace_inner",
 ]
 
 [[package]]
 name = "test_publish_cool_workspace_inner"
-version = "0.13.4"
+version = "0.13.9"
